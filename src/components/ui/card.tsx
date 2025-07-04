@@ -1,77 +1,109 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+type CardProps = React.ComponentProps<"div"> & {
+  children: React.ReactNode
+}
+
+function Card({ className, children, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-zinc-800 text-primary-100 flex flex-col gap-4 rounded-xl py-6 shadow-lg",
+        "bg-zinc-900 text-white border border-zinc-800 rounded-2xl shadow-sm transition hover:shadow-md hover:border-zinc-700",
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+function CardContent({ className, children, ...props }: CardProps) {
   return (
     <div
       data-slot="card-content"
-      className={cn("px-6 flex justify-between items-center", className)}
+      className={cn(
+        "p-6 flex flex-col-reverse md:flex-row md:justify-between md:items-center gap-6",
+        className
+      )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
-function CardInfo({ className, ...props }: React.ComponentProps<"div">) {
+function CardBody({ className, children, ...props }: CardProps) {
   return (
     <div
-      className={cn("flex flex-col gap-1", className)}
+      data-slot="card-body"
+      className={cn("space-y-1", className)}
       {...props}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"p">) {
+function CardTitle({ className, children, ...props }: React.ComponentProps<"h3">) {
+  return (
+    <h3
+      data-slot="card-title"
+      className={cn("text-xl font-semibold tracking-tight", className)}
+      {...props}
+    >
+      {children}
+    </h3>
+  )
+}
+
+type CardTextProps = React.ComponentProps<"p"> & {
+  variant?: "default" | "subtitle" | "price" | "quantity"
+}
+
+function CardText({
+  className,
+  variant = "default",
+  children,
+  ...props
+}: CardTextProps) {
+  const baseClass = {
+    default: "text-base text-white",
+    subtitle: "text-sm text-zinc-500",
+    price: "text-green-600 font-bold text-lg",
+    quantity: "text-base font-medium text-white",
+  }
+
   return (
     <p
-      className={cn("text-lg font-semibold leading-tight", className)}
+      data-slot={`card-text-${variant}`}
+      className={cn(baseClass[variant], className)}
       {...props}
-    />
+    >
+      {children}
+    </p>
   )
 }
 
-function CardSubtitle({ className, ...props }: React.ComponentProps<"p">) {
+function CardActions({ className, children, ...props }: CardProps) {
   return (
-    <p
-      className={cn("text-sm text-primary-300", className)}
+    <div
+      data-slot="card-actions"
+      className={cn("flex gap-2 md:ml-auto", className)}
       {...props}
-    />
-  )
-}
-
-function CardPrice({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-green-400 font-bold text-base", className)}
-      {...props}
-    />
-  )
-}
-
-function CardActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("flex gap-3", className)} {...props} />
+    >
+      {children}
+    </div>
   )
 }
 
 export {
   Card,
   CardContent,
-  CardInfo,
+  CardBody,
   CardTitle,
-  CardSubtitle,
-  CardPrice,
+  CardText,
   CardActions,
 }
