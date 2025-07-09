@@ -3,9 +3,8 @@ import { prisma } from "@/lib/prisma/client/prisma"
 
 export async function POST(req: NextRequest) {
   try {
-    const { productName, code, brutePrice, percentage, totalQuantity } = await req.json() // extrai os dados da req
+    const { productName, code, brutePrice, percentage, totalQuantity } = await req.json()
 
-    // validação básica
     if (
       !productName ||
       brutePrice === undefined ||
@@ -17,29 +16,30 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
+    const salePrice = brutePrice * (1 + percentage / 100)
 
     const product = await prisma.product.upsert({
       where: { productName },
       update: {
         brutePrice,
         percentage,
+        salePrice,  // salva aqui
         totalQuantity: {
           increment: totalQuantity,
         },
-        ...(code ? { code } : {})
+        ...(code ? { code } : {}),
       },
       create: {
         productName,
         brutePrice,
         percentage,
+        salePrice,  // e aqui
         totalQuantity,
-        code
-      }
+        code,
+      },
     })
 
-    const status = product ? 200 : 201
-
-    return NextResponse.json(product, { status })
+    return NextResponse.json({ ...product, salePrice }, { status: 200 })
   } catch (error) {
     console.error("Erro no POST /createProduct:", error)
     return NextResponse.json(

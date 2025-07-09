@@ -65,7 +65,7 @@ export default function ListAllProducts() {
         </thead>
         <tbody className="bg-zinc-800 divide-y divide-zinc-700 text-center">
           {filteredProducts?.map(product => {
-            const salePrice = product.brutePrice + (product.brutePrice * (product.percentage / 100))
+            const salePrice = product.salePrice // pega direto do backend
             return (
               <tr key={product.id} className="hover:bg-zinc-700 transition-colors">
                 <td className="px-4 py-3 font-medium text-white">{product.productName}</td>
@@ -99,6 +99,7 @@ export default function ListAllProducts() {
             )
           })}
         </tbody>
+
       </table>
     </div>
   )

@@ -7,4 +7,5 @@ export type ProductResponse = ProductRequest & {
   id: string
   createdAt: string
   updatedAt: string
+  salePrice: number
 }
