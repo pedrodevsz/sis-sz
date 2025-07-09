@@ -12,8 +12,53 @@ model Product {
   productName   String   @unique
   code          String?
   brutePrice    Float
+  salePrice     Float
   percentage    Float
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   totalQuantity Int      @default(0)
+}
+
+model Sale {
+  id            String         @id @default(uuid())
+  customerName  String
+  paymentMethod String?
+  street        String?
+  number        String?
+  description   String?
+  delivered     Boolean
+  paid          String
+  updatedAt     DateTime       @updatedAt
+  productsSold  ProductSold[]  @relation(name: "SaleProducts")
+  createdAt     DateTime       @default(now())
+  PartialValue  PartialValue[]
+}
+
+model PartialValue {
+  id     String @id @default(uuid())
+  value  String
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id])
+}
+
+model ProductSold {
+  id               String @id @default(uuid())
+  productName      String
+  salePriceUnitary Float
+  quantitySold     Int
+  saleId           String
+  sale             Sale   @relation(name: "SaleProducts", fields: [saleId], references: [id])
+}
+
+// Enum para o status do pagamento
+enum PaidStatus {
+  paid
+  notPaid
+}
+
+// Enum para a forma de pagamento
+enum PaymentMethod {
+  dinheiro
+  pix
+  cartao
 }
